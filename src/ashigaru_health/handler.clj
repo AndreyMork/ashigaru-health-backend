@@ -1,11 +1,54 @@
 (ns ashigaru-health.handler
-  (:require [compojure.core :refer :all]
-            [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+  (:require
+   [ashigaru-health.patients :as patients]
+   [compojure.coercions :refer [as-int]]
+   [compojure.core :refer [defroutes GET ANY]]
+   [compojure.route :as route]
+   [liberator.core :refer [resource]]
+   [liberator.representation]
+   [ring.middleware.json :refer [wrap-json-params]]
+   [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+   [ring.middleware.params :refer [wrap-params]]))
+
+(defn build-entry-url
+  [request id]
+  (format "%s://%s:%s%s/%s"
+          (name (:scheme request))
+          (:server-name request)
+          (:server-port request)
+          (:uri request)
+          (str id)))
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
+
+  (ANY "/patients"
+    []
+    (resource
+     :available-media-types ["application/json"]
+     :allowed-methods [:get :post]
+     :location #(build-entry-url (:request %) ((comp :id ::patient) %))
+     :post! (fn [{:keys [request]}] {::patient (patients/new-patient (:params request))})
+     :handle-created ::patient
+     :handle-ok (fn [_] (patients/get-patients))))
+
+  (ANY "/patients/:id"
+    [id :<< as-int]
+    (resource :available-media-types ["application/json"]
+              :allowed-methods [:get :delete :patch]
+              :delete! (fn [_] (patients/delete-patient-by-id id))
+              :patch! (fn [{:keys [request]}] (patients/update-patient id (:params request)))
+              :exists? (fn [_]
+                         (when-let [patient (patients/get-patient-by-id id)]
+                           {::patient patient}))
+              :handle-ok ::patient
+              :handle-not-found {:message "PATIENT_NOT_FOUND"
+                                 :patient-id id}))
+
   (route/not-found "Not Found"))
 
 (def app
-  (wrap-defaults app-routes site-defaults))
+  (-> app-routes
+      wrap-keyword-params
+      wrap-json-params
+      wrap-params))
