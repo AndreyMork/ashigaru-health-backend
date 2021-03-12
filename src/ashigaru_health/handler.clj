@@ -8,7 +8,8 @@
    [liberator.representation]
    [ring.middleware.json :refer [wrap-json-params]]
    [ring.middleware.keyword-params :refer [wrap-keyword-params]]
-   [ring.middleware.params :refer [wrap-params]]))
+   [ring.middleware.params :refer [wrap-params]]
+   [ring.logger :as logger]))
 
 (defn build-entry-url
   [request id]
@@ -49,6 +50,7 @@
 
 (def app
   (-> app-routes
+      logger/wrap-with-logger
       wrap-keyword-params
       wrap-json-params
       wrap-params))
