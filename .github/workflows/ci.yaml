@@ -29,9 +29,11 @@ jobs:
           name: target
           path: target
       - run: ls -a
-      - run: cat Makefile
+      - run: ls -a target
       - name: format-check
         run: make format-check
+      - run: ls -a
+      - run: ls -a target
 
   lint:
     runs-on: ubuntu-latest
