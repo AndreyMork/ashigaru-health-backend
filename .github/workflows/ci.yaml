@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+defaults:
+  runs-on: ubuntu-latest
+
+jobs:
+  build:
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: make install
+
+  format-check:
+    needs: build
+    steps:
+      - name: format-check
+        run: make format-check
+
+  lint:
+    needs: build
+    steps:
+      - name: lint
+        run: make lint
