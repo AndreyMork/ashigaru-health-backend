@@ -57,5 +57,5 @@ deploy: docker-build
 .PHONY: deploy
 
 heroku-deploy:
-	git push heroku $(CURRENT_GIT_BRANCH):master
+	git push --force heroku $(CURRENT_GIT_BRANCH):master
 .PHONY: heroku-deploy
