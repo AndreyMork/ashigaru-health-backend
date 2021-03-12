@@ -4,6 +4,7 @@
    [compojure.coercions :refer [as-int]]
    [compojure.core :refer [defroutes GET ANY]]
    [compojure.route :as route]
+   [compojure.middleware :refer [wrap-canonical-redirect remove-trailing-slash]]
    [liberator.core :refer [resource]]
    [liberator.representation]
    [ring.middleware.json :refer [wrap-json-params]]
@@ -48,8 +49,17 @@
 
   (route/not-found "Not Found"))
 
+(defn wrap-redirect-trailing-slash
+  [middleware]
+  (wrap-canonical-redirect
+   middleware
+   #(case %
+      "/" %
+      (remove-trailing-slash %))))
+
 (def app
   (-> app-routes
+      wrap-redirect-trailing-slash
       logger/wrap-with-logger
       wrap-keyword-params
       wrap-json-params
