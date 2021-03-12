@@ -1,7 +1,7 @@
 #! make
 
 MAKEFLAGS += --silent
-GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+CURRENT_GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 IMAGE_NAME=ashigaru-health-backend
 
 # General
@@ -55,3 +55,7 @@ docker-build:
 deploy: docker-build
 	docker-compose up --detach
 .PHONY: deploy
+
+heroku-deploy:
+	git push heroku $(CURRENT_GIT_BRANCH):master
+.PHONY: heroku-deploy
