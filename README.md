@@ -1,7 +1,6 @@
 # ashigaru-health
 
-[![Clojure CI]
-(https://github.com/AndreyMork/ashigaru-health-backend/actions/workflows/clojure.yml/badge.svg)](https://github.com/AndreyMork/ashigaru-health-backend/actions/workflows/clojure.yml)
+[![Clojure CI](https://github.com/AndreyMork/ashigaru-health-backend/actions/workflows/clojure.yml/badge.svg?branch=devops%2Fgithub-actions)](https://github.com/AndreyMork/ashigaru-health-backend/actions/workflows/clojure.yml)
 
 FIXME
 
