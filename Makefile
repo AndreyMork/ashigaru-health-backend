@@ -29,11 +29,13 @@ build:
 
 # Tests
 
-# format-check:
-# .PHONY: format-check
+format-check:
+	lein cljfmt check
+.PHONY: format-check
 
-# format:
-# .PHONY: format
+format:
+	lein cljfmt fix
+PHONY: format
 
 # lint:
 # .PHONY: lint
@@ -41,8 +43,8 @@ build:
 # test:
 # .PHONY: test
 
-# full-test: format-check lint test
-# .PHONY: full-test
+full-test: format-check
+.PHONY: full-test
 
 
 # Deploy
@@ -52,9 +54,12 @@ docker-build:
 	docker build --tag $(IMAGE_NAME):$(TAG) .
 .PHONY: docker-build
 
-deploy: docker-build
-	docker-compose up --detach
+deploy: full-test deploy-no-test
 .PHONY: deploy
+
+deploy-no-test: docker-build
+	docker-compose up --detach
+.PHONY: deploy-no-test
 
 heroku-deploy:
 	git push --force heroku $(CURRENT_GIT_BRANCH):master

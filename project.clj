@@ -10,11 +10,14 @@
                  [ring-logger "1.0.1"]
                  [liberator "0.15.2"]
                  [compojure "1.6.1"]]
-  :plugins [[lein-ring "0.12.5"]]
+  :plugins [[lein-ring "0.12.5"]
+            [lein-cljfmt "0.7.0"]]
   :ring {:handler ashigaru-health.handler/app}
-  :profiles
-  {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                        [ring/ring-mock "0.3.2"]]}
-   :uberjar {:uberjar-name "app.jar"
-             :aot :all
-             :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
+                                  [ring/ring-mock "0.3.2"]]}
+             :uberjar {:uberjar-name "app.jar"
+                       :aot :all
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
+  :cljfmt {:remove-multiple-non-indenting-spaces? true
+           :split-keypairs-over-multiple-lines? true
+           :paths ["src" "project.clj"]})
