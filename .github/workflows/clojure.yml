@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Setup clj-kondo
         uses: DeLaGuardo/setup-clj-kondo@v1
-          with:
-            version: '2021.02.13'
+        with:
+          version: '2021.02.13'
 
       - uses: actions/checkout@v2
 
