@@ -1,7 +1,8 @@
 #! make
 
 MAKEFLAGS += --silent
-CURRENT_GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
+CURRENT_GIT_BRANCH:=$(shell git rev-parse --abbrev-ref HEAD)
+CLJ_KONDO_BIN_EXISTS:=$(shell command -v clj-kondo 2> /dev/null)
 IMAGE_NAME=ashigaru-health-backend
 
 # General
@@ -13,8 +14,8 @@ install:
 clean:
 	lein clean
 	rm -rf \
-		pom.xml \
-		.clj-condo
+		target \
+		pom.xml
 .PHONY: clean
 
 run-dev:
@@ -37,13 +38,26 @@ format:
 	lein cljfmt fix
 PHONY: format
 
-# lint:
-# .PHONY: lint
+clj-kondo-setup:
+ifdef CLJ_KONDO_BIN_EXISTS
+	clj-kondo --parallel --lint $(shell lein classpath)
+else
+	lein clj-kondo --parallel --lint $(shell lein classpath)
+endif
+.PHONY: clj-kondo-setup
 
-# test:
-# .PHONY: test
+lint:
+ifdef CLJ_KONDO_BIN_EXISTS
+	clj-kondo --lint src
+else
+	lein clj-kondo --lint src
+endif
+.PHONY: lint
 
-full-test: format-check
+test:
+.PHONY: test
+
+full-test: format-check lint test
 .PHONY: full-test
 
 

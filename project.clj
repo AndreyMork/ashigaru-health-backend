@@ -13,8 +13,10 @@
   :plugins [[lein-ring "0.12.5"]
             [lein-cljfmt "0.7.0"]]
   :ring {:handler ashigaru-health.handler/app}
-  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [ring/ring-mock "0.3.2"]]}
+  :profiles {:dev {:dependencies [[clj-kondo "RELEASE"]
+                                  [javax.servlet/servlet-api "2.5"]
+                                  [ring/ring-mock "0.3.2"]]
+                   :aliases {"clj-kondo" ["run" "-m" "clj-kondo.main"]}}
              :uberjar {:uberjar-name "app.jar"
                        :aot :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
