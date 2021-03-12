@@ -1,5 +1,10 @@
 # ashigaru-health
 
+[![Clojure CI]
+(https://github.com/AndreyMork/ashigaru-health-backend/actions/workflows/clojure.yml/badge.svg)
+]
+(https://github.com/AndreyMork/ashigaru-health-backend/actions/workflows/clojure.yml)
+
 FIXME
 
 ## Prerequisites
