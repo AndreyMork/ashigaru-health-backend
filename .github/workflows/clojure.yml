@@ -8,12 +8,14 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: make install
-    - name: Run tests
-      run: make full-test
+      - name: Setup clj-kondo
+        uses: DeLaGuardo/setup-clj-kondo@v1
+
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: make install
+      - name: Run tests
+        run: make full-test
