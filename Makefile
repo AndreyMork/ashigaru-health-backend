@@ -5,6 +5,7 @@ CURRENT_GIT_BRANCH:=$(shell git rev-parse --abbrev-ref HEAD)
 CLJ_KONDO_BIN_EXISTS:=$(shell command -v clj-kondo 2> /dev/null)
 IMAGE_NAME=ashigaru-health-backend
 
+
 # General
 
 install:
@@ -22,11 +23,13 @@ run-dev:
 	lein trampoline ring server-headless
 .PHONY: run-dev
 
+
 # Build
 
 build:
 	lein ring uberjar
 .PHONY: build
+
 
 # Tests
 
