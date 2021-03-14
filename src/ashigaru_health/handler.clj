@@ -3,21 +3,20 @@
    [ashigaru-health.patients :as patients]
    [ashigaru-health.utils :as utils]
    [compojure.coercions :refer [as-int]]
-   [compojure.core :refer [defroutes GET ANY]]
+   [compojure.core :as composure :refer [GET ANY]]
    [compojure.route :as route]
-   [liberator.core :refer [resource]]
-   [liberator.representation]
-   [ring.middleware.json :refer [wrap-json-params]]
-   [ring.middleware.keyword-params :refer [wrap-keyword-params]]
-   [ring.middleware.params :refer [wrap-params]]
+   [liberator.core :as liberator]
+   [ring.middleware.json :as middleware.json]
+   [ring.middleware.keyword-params :as middleware.keyword-params]
+   [ring.middleware.params :as middleware.params]
    [ring.logger :as logger]))
 
-(defroutes app-routes
+(composure/defroutes app-routes
   (GET "/" [] "Hello World")
 
   (ANY "/patients"
     []
-    (resource
+    (liberator/resource
      :available-media-types ["application/json"]
      :allowed-methods [:get :post]
      :location (fn
@@ -33,24 +32,24 @@
 
   (ANY "/patients/:id"
     [id :<< as-int]
-    (resource :available-media-types ["application/json"]
-              :allowed-methods [:get :delete :patch]
-              :respond-with-entity? (utils/method-is? :patch)
-              :delete! (fn
-                         [_]
-                         (patients/delete-patient-by-id id))
-              :patch! (fn
-                        [{:keys [request]}]
-                        (let [{params :params} request
-                              patient (patients/update-patient id params)]
-                          {::patient patient}))
-              :exists? (fn
-                         [_]
-                         (when-let [patient (patients/get-patient-by-id id)]
-                           {::patient patient}))
-              :handle-ok ::patient
-              :handle-not-found {:message "PATIENT_NOT_FOUND"
-                                 :patient-id id}))
+    (liberator/resource :available-media-types ["application/json"]
+                        :allowed-methods [:get :delete :patch]
+                        :respond-with-entity? (utils/method-is? :patch)
+                        :delete! (fn
+                                   [_]
+                                   (patients/delete-patient-by-id id))
+                        :patch! (fn
+                                  [{:keys [request]}]
+                                  (let [{params :params} request
+                                        patient (patients/update-patient id params)]
+                                    {::patient patient}))
+                        :exists? (fn
+                                   [_]
+                                   (when-let [patient (patients/get-patient-by-id id)]
+                                     {::patient patient}))
+                        :handle-ok ::patient
+                        :handle-not-found {:message "PATIENT_NOT_FOUND"
+                                           :patient-id id}))
 
   (route/not-found "Not Found"))
 
@@ -58,6 +57,6 @@
   (-> app-routes
       utils/wrap-redirect-trailing-slash
       logger/wrap-with-logger
-      wrap-keyword-params
-      wrap-json-params
-      wrap-params))
+      middleware.keyword-params/wrap-keyword-params
+      middleware.json/wrap-json-params
+      middleware.params/wrap-params))

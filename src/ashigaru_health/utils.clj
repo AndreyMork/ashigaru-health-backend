@@ -1,5 +1,5 @@
 (ns ashigaru-health.utils
-  (:require [compojure.middleware :refer [wrap-canonical-redirect remove-trailing-slash]]))
+  (:require [compojure.middleware]))
 
 (defn method-is?
   [method]
@@ -16,8 +16,8 @@
 
 (defn wrap-redirect-trailing-slash
   [middleware]
-  (wrap-canonical-redirect
+  (compojure.middleware/wrap-canonical-redirect
    middleware
    #(case %
       "/" %
-      (remove-trailing-slash %))))
+      (compojure.middleware/remove-trailing-slash %))))
