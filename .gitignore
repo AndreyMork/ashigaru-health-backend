@@ -3,7 +3,7 @@
 .temp
 temp
 
-.clj-kondo
+.clj-kondo/.cache
 .lsp
 
 /target

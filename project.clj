@@ -11,10 +11,11 @@
                  [liberator "0.15.2"]
                  [compojure "1.6.1"]]
   :plugins [[lein-ring "0.12.5"]
-            [lein-cljfmt "0.7.0"]]
-  :ring {:handler ashigaru-health.handler/app}
+            [lein-cljfmt "0.7.0"]
+            [lein-midje "3.2.1"]]
+  :ring {:handler ashigaru-health.main/-main}
   :profiles {:dev {:dependencies [[clj-kondo "RELEASE"]
-                                  [javax.servlet/servlet-api "2.5"]
+                                  [midje "1.9.10"]
                                   [ring/ring-mock "0.3.2"]]
                    :aliases {"clj-kondo" ["run" "-m" "clj-kondo.main"]}}
              :uberjar {:uberjar-name "app.jar"
@@ -22,4 +23,4 @@
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
   :cljfmt {:remove-multiple-non-indenting-spaces? true
            :split-keypairs-over-multiple-lines? true
-           :paths ["src" "project.clj"]})
+           :paths ["src" "test" "project.clj"]})
