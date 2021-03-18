@@ -1,7 +1,7 @@
 (ns ashigaru-health.handler-test
   (:require
    [ashigaru-health.handler :refer [get-app]]
-   [ashigaru-health.test-checkers :refer [with-status? with-body?]]
+   [ashigaru-health.test-checkers :refer [with-status? with-body? with-body-without-id?]]
    [ashigaru-health.test-utils
     :as test-utils
     :refer [simple-request with-json-body simple-json-request]]
@@ -61,7 +61,7 @@
             location-response (simple-json-request app :get location)]
         response => (with-status? 201)
         location =not=> nil
-        (dissoc response-body :id) => body
+        response => (with-body-without-id? body)
         location-response => (with-status? 200)
         location-response => (with-body? response-body)))
 
@@ -87,8 +87,22 @@
 (midje/future-fact "`POST /patients` validates incoming data"
                    nil => nil)
 
-(midje/future-fact "`PATCH /patients/:id` updates patient"
-                   nil => nil)
+(midje/fact "`PATCH /patients/:id` updates patient"
+            (let [prepatch-response (simple-json-request app :get "/patients/1")
+                  body {:first-name "patch"
+                        :last-name "patch"
+                        :patronim "patch"
+                        :birthdate "2000"
+                        :oms "1111222233334444"
+                        :gender "male"
+                        :address "patch"}
+                  response (-> (mock/request :patch "/patients/1")
+                               (mock/json-body body)
+                               app
+                               with-json-body)]
+              prepatch-response =not=> (with-body-without-id? body)
+              response => (with-status? 200)
+              response => (with-body-without-id? body)))
 
 (fact "`PATCH /patients/:id` handles not found"
       (let [response (simple-request app :patch "/patients/3")]

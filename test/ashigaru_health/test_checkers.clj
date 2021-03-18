@@ -8,6 +8,12 @@
   (midje/checker [response]
                  (= (:body response) body)))
 
+(defn with-body-without-id?
+  "Checks if response body is correct"
+  [body]
+  (midje/checker [response]
+                 (= (dissoc (:body response) :id) body)))
+
 (defn with-status?
   "Checks if response status is correct"
   [status]
