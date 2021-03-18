@@ -1,3 +1,2 @@
-; {:lint-as {midje.sweet/checker clojure.core/fn
-;            midje.sweet/tabular clj-kondo.lint-as/def-catch-all}}
-{}
+{:lint-as {midje.sweet/checker clojure.core/fn
+           midje.sweet/tabular clj-kondo.lint-as/def-catch-all}}
