@@ -4,7 +4,8 @@ MAKEFLAGS += --silent
 CURRENT_GIT_BRANCH:=$(shell git rev-parse --abbrev-ref HEAD)
 CLJ_KONDO_BIN_EXISTS:=$(shell command -v clj-kondo 2> /dev/null)
 IMAGE_NAME=ashigaru-health-backend
-
+SRC_DIR=src
+TEST_DIR=test
 
 # General
 
@@ -19,15 +20,21 @@ clean:
 		pom.xml
 .PHONY: clean
 
+run-dev: PORT=3000
 run-dev:
-	lein trampoline ring server-headless
+	PORT=$(PORT) \
+	lein trampoline run
+.PHONY: run-dev
+
+run-dev-watch:
+	ls $(SRC_DIR)/**/*.clj | entr -r make run-dev
 .PHONY: run-dev
 
 
 # Build
 
 build:
-	lein ring uberjar
+	lein uberjar
 .PHONY: build
 
 
@@ -42,6 +49,7 @@ format:
 PHONY: format
 
 clj-kondo-setup:
+	rm -rf .clj-kondo/.cache
 ifdef CLJ_KONDO_BIN_EXISTS
 	clj-kondo --parallel --lint $(shell lein classpath)
 else
@@ -51,13 +59,14 @@ endif
 
 lint:
 ifdef CLJ_KONDO_BIN_EXISTS
-	clj-kondo --lint src
+	clj-kondo --parallel --lint $(SRC_DIR) $(TEST_DIR)
 else
-	lein clj-kondo --lint src
+	lein clj-kondo --parallel --lint $(SRC_DIR) $(TEST_DIR)
 endif
 .PHONY: lint
 
 test:
+	lein midje
 .PHONY: test
 
 full-test: format-check lint test
