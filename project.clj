@@ -15,7 +15,6 @@
             [lein-midje "3.2.1"]]
   :ring {:handler ashigaru-health.main/-main}
   :profiles {:dev {:dependencies [[clj-kondo "RELEASE"]
-                                  [borkdude/edamame "0.0.11-alpha.29"]
                                   [midje "1.9.10"]
                                   [ring/ring-mock "0.3.2"]]
                    :aliases {"clj-kondo" ["run" "-m" "clj-kondo.main"]}}
