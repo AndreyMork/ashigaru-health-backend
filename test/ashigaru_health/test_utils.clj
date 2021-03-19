@@ -1,5 +1,8 @@
 (ns ashigaru-health.test-utils
-  (:require [clojure.data.json :as json]
+  (:require [ashigaru-health.specs.patient :as patient-spec]
+            [clojure.data.json :as json]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
             [ring.mock.request :as mock]))
 
 (defn parse-json
@@ -19,3 +22,20 @@
   [app method path]
   (-> (simple-request app method path)
       with-json-body))
+
+(defn generate-patients-vector
+  [n]
+  (gen/generate (-> (s/gen ::patient-spec/patient)
+                    (gen/vector n))))
+
+(defn generate-patients-map
+  [n]
+  (let [patients (generate-patients-vector n)]
+    (zipmap (map :id patients) patients)))
+
+(defn generate-unkonwn-id
+  [patients]
+  (gen/generate (gen/such-that
+                 #(not (contains? patients %))
+                 (s/gen nat-int?))))
+

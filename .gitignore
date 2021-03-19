@@ -16,5 +16,6 @@ pom.xml.asc
 *.class
 /.lein-*
 /.nrepl-port
+.rebel_readline_history
 
 .DS_Store

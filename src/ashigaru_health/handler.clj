@@ -2,6 +2,9 @@
   (:require
    [ashigaru-health.patients :as patients]
    [ashigaru-health.utils :as utils]
+   [ashigaru-health.specs.patient :as patient-spec]
+   [clojure.spec.alpha :as s]
+   [orchestra.core :refer [defn-spec]] [ashigaru-health.specs.config :as config-spec]
    [compojure.coercions :refer [as-int]]
    [compojure.core :as composure :refer [GET ANY]]
    [compojure.route :as route]
@@ -21,6 +24,12 @@
      (liberator/resource
       :available-media-types ["application/json"]
       :allowed-methods [:get :post]
+      :malformed? (fn
+                    [{:keys [request]}]
+                    (let [{:keys [request-method params]} request]
+                      (case request-method
+                        :post (not (s/valid? ::patient-spec/patient-no-id params))
+                        false)))
       :location (fn
                   [{:keys [request ::patient]}]
                   (utils/build-entry-url request (:id patient)))
@@ -36,6 +45,12 @@
      [id :<< as-int]
      (liberator/resource :available-media-types ["application/json"]
                          :allowed-methods [:get :delete :patch]
+                         :malformed? (fn
+                                       [{:keys [request]}]
+                                       (let [{:keys [request-method params]} request]
+                                         (case request-method
+                                           :patch (not (s/valid? ::patient-spec/partial-patient params))
+                                           false)))
                          :respond-with-entity? (utils/method-is? :patch)
                          :delete! (fn
                                     [_]
@@ -55,8 +70,8 @@
 
    (route/not-found "Not Found")))
 
-(defn get-app
-  [{:keys [db logging?]}]
+(defn-spec get-app some?
+  [{:keys [db logging?]} ::config-spec/config]
   (let [router (get-router db)]
     (-> router
         utils/wrap-redirect-trailing-slash

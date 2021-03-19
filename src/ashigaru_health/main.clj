@@ -25,5 +25,6 @@
 (defn -main
   [& _args]
   (let [port (Integer/parseInt (System/getenv "PORT"))
-        app (get-app {:db patients-db})]
+        app (get-app {:db patients-db
+                      :logging? true})]
     (run-jetty app {:port port})))

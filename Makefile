@@ -69,7 +69,11 @@ test:
 	lein midje
 .PHONY: test
 
-full-test: format-check lint test
+test-coverage:
+	lein cloverage --runner :midje
+.PHONY: test-coverage
+
+full-test: format-check test
 .PHONY: full-test
 
 

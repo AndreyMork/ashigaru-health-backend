@@ -1,4 +1,6 @@
-(ns ashigaru-health.patients)
+(ns ashigaru-health.patients
+  (:require [ashigaru-health.specs.patient :as patient-spec]
+            [orchestra.core :refer [defn-spec]]))
 
 (defn next-id
   [db]
@@ -11,19 +13,20 @@
   [db]
   (vals @db))
 
-(defn get-patient-by-id
-  [db id]
+(defn-spec get-patient-by-id ::patient-spec/maybe-patient
+  [db some? id integer?]
   (get @db id))
 
-(defn new-patient
-  [db {:keys [first-name
-              last-name
-              patronim
-              birthdate
-              address
-              gender
-              oms]}]
-  (let [id (next-id db)
+(defn-spec new-patient ::patient-spec/patient
+  [db some? params ::patient-spec/patient-no-id]
+  (let [{:keys [first-name
+                last-name
+                patronim
+                birthdate
+                address
+                gender
+                oms]} params
+        id (next-id db)
         new-patient {:id id
                      :first-name first-name
                      :last-name last-name
@@ -35,16 +38,22 @@
     (reset! db (assoc @db id new-patient))
     new-patient))
 
-(defn update-patient
-  [db id params]
+(defn-spec update-patient ::patient-spec/maybe-patient
+  [db some? id int? params ::patient-spec/partial-patient]
   (when-let [patient (get @db id)]
-    (let [update-values (select-keys
-                         params
-                         [:first-name :last-name :patronim :birthdate :gender :address :oms])
+    (let [update-values (select-keys params
+                                     [:first-name
+                                      :last-name
+                                      :patronim
+                                      :birthdate
+                                      :gender
+                                      :address
+                                      :oms])
           updated-patient (merge patient update-values)]
       (reset! db (assoc @db id updated-patient))
       updated-patient)))
 
-(defn delete-patient-by-id
-  [db id]
-  (when (contains? @db id) (reset! db (dissoc @db id))))
+(defn-spec delete-patient-by-id nil?
+  [db some? id int?]
+  (when (contains? @db id) (reset! db (dissoc @db id)))
+  nil)
