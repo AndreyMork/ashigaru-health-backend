@@ -27,7 +27,8 @@
 (defn -main
   [& _args]
   (let [{app-config :app
-         server-config :server} (load-and-validate-config)
+         server-config :server
+         :as config} (load-and-validate-config)
         app (get-app {:db patients-db
                       :logging? true})]
     (when (= "development" (:env app-config))

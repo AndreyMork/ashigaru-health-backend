@@ -87,9 +87,9 @@ docker-build:
 deploy: full-test deploy-no-test
 .PHONY: deploy
 
-deploy-no-test: docker-build
+deploy-no-tests: docker-build
 	docker-compose up --detach
-.PHONY: deploy-no-test
+.PHONY: deploy-no-tests
 
 heroku-deploy:
 	git push --force heroku $(CURRENT_GIT_BRANCH):master
