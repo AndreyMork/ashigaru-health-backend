@@ -4,7 +4,6 @@
    [ashigaru-health.utils :as utils]
    [ashigaru-health.specs.patient :as patient-spec]
    [clojure.spec.alpha :as s]
-   [orchestra.core :refer [defn-spec]] [ashigaru-health.specs.config :as config-spec]
    [compojure.coercions :refer [as-int]]
    [compojure.core :as composure :refer [GET ANY]]
    [compojure.route :as route]
@@ -70,8 +69,8 @@
 
    (route/not-found "Not Found")))
 
-(defn-spec get-app some?
-  [{:keys [db logging?]} ::config-spec/config]
+(defn get-app
+  [{:keys [db logging?]}]
   (let [router (get-router db)]
     (-> router
         utils/wrap-redirect-trailing-slash

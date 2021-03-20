@@ -4,6 +4,7 @@
   :min-lein-version "2.0.0"
   :main ^:skip-aot ashigaru-health.main
   :dependencies [[org.clojure/clojure "1.10.2"]
+                 [metosin/maailma "1.1.0"]
                  [org.clojure/test.check "1.1.0"]
                  [ring/ring-core "1.8.2"]
                  [ring/ring-json "0.5.0"]
@@ -26,4 +27,4 @@
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}}
   :cljfmt {:remove-multiple-non-indenting-spaces? true
            :split-keypairs-over-multiple-lines? true
-           :paths ["src" "test" "project.clj"]})
+           :paths ["src" "test" "project.clj" "resources"]})
