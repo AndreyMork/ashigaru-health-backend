@@ -1,6 +1,8 @@
 (ns ashigaru-health.main
   (:gen-class)
   (:require [ashigaru-health.handler :refer [get-app]]
+            [ashigaru-health.config :refer [load-and-validate-config]]
+            [orchestra.spec.test]
             [ring.adapter.jetty :refer [run-jetty]]))
 
 (def patients-db
@@ -24,7 +26,10 @@
 
 (defn -main
   [& _args]
-  (let [port (Integer/parseInt (System/getenv "PORT"))
+  (let [{app-config :app
+         server-config :server} (load-and-validate-config)
         app (get-app {:db patients-db
                       :logging? true})]
-    (run-jetty app {:port port})))
+    (when (= "development" (:env app-config))
+      (orchestra.spec.test/instrument))
+    (run-jetty app server-config)))
