@@ -84,7 +84,7 @@ docker-build:
 	docker build --tag $(IMAGE_NAME):$(TAG) .
 .PHONY: docker-build
 
-deploy: full-test deploy-no-test
+deploy: full-test deploy-no-tests
 .PHONY: deploy
 
 deploy-no-tests: docker-build

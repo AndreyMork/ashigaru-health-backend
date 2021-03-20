@@ -1,14 +1,24 @@
 (ns ashigaru-health.config
-  (:require [maailma.core :as maailma]
-            [clojure.spec.alpha :as s]))
+  (:require
+   [ashigaru-health.utils :as utils]
+   [clojure.spec.alpha :as s]
+   [maailma.core :as maailma]))
 
 (s/def ::env #{"production" "development" "test"})
 (s/def ::app (s/keys :req-un [::env]))
 
 (s/def ::port int?)
-(s/def ::server (s/keys :req-un [::port]))
+(s/def ::logging boolean?)
+(s/def ::server (s/keys :req-un [::port ::logging]))
 
-(s/def ::config (s/keys :req-un [::app ::server]))
+(s/def ::port int?)
+(s/def ::host string?)
+(s/def ::username string?)
+(s/def ::password string?)
+(s/def ::database string?)
+(s/def ::db (s/keys :req-un [::port ::host ::username ::password ::database]))
+
+(s/def ::config (s/keys :req-un [::app ::server ::db]))
 
 (defn validate-config
   [config]
@@ -26,8 +36,13 @@
                  (maailma/env "server")
                  (maailma/env "db")
                  (maailma/env-var "PORT" [:server :port])
+                 (maailma/env-var "DATABASE_URL" [:db :uri])
                  override)]
-     (update-in config [:server :port] #(Integer/parseUnsignedInt %)))))
+     (-> config
+         (update-in [:server :port] #(Integer/parseUnsignedInt %))
+         (update :db #(if-let [uri (:uri %)]
+                        (utils/parse-db-uri uri)
+                        %))))))
 
 (defn load-and-validate-config
   ([] (load-and-validate-config nil))

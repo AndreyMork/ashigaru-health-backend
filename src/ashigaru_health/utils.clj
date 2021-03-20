@@ -1,5 +1,8 @@
 (ns ashigaru-health.utils
-  (:require [compojure.middleware]))
+  (:require [compojure.middleware]
+            [clojure.string :as string]
+            [next.jdbc.types :as sql-types])
+  (:import java.net.URI))
 
 (defn method-is?
   [method]
@@ -21,3 +24,28 @@
    #(case %
       "/" %
       (compojure.middleware/remove-trailing-slash %))))
+
+(defn update-if-exists
+  [coll key f & args]
+  (if (get coll key)
+    (update coll key #(apply f % args))
+    coll))
+
+(defn sqlize-patient
+  [patient]
+  (-> patient
+      (update-if-exists :gender sql-types/as-other)
+      (update-if-exists :birthdate sql-types/as-date)))
+
+(defn parse-db-uri
+  [uri-string]
+  (let [uri (URI/create uri-string)
+        host (.getHost uri)
+        port (.getPort uri)
+        [username password] (string/split (.getUserInfo uri) #":")
+        database (string/join (rest (.getPath uri)))]
+    {:host host
+     :port port
+     :username username
+     :password password
+     :database database}))
