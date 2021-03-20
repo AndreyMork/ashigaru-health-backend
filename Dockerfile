@@ -4,6 +4,7 @@ FROM clojure AS build-image
 WORKDIR /usr/src
 COPY project.clj ./
 COPY src src
+COPY resources resources
 
 RUN ["lein", "uberjar"]
 
