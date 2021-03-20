@@ -19,13 +19,15 @@
 (defn load-config
   ([] (load-config nil))
   ([override]
-   (maailma/build-config
-    (maailma/resource "config-defaults.edn")
-    (maailma/file ".local-config.edn")
-    (maailma/env "app")
-    (maailma/env "server")
-    (maailma/env "db")
-    override)))
+   (let [config (maailma/build-config
+                 (maailma/resource "config-defaults.edn")
+                 (maailma/file ".local-config.edn")
+                 (maailma/env "app")
+                 (maailma/env "server")
+                 (maailma/env "db")
+                 (maailma/env-var "PORT" [:server :port])
+                 override)]
+     (update-in config [:server :port] #(Integer/parseUnsignedInt %)))))
 
 (defn load-and-validate-config
   ([] (load-and-validate-config nil))
