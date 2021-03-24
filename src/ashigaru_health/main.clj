@@ -1,36 +1,21 @@
 (ns ashigaru-health.main
   (:gen-class)
-  (:require [ashigaru-health.handler :refer [get-app]]
+  (:require [ashigaru-health.app :refer [get-app]]
             [ashigaru-health.config :refer [load-and-validate-config]]
+            [ashigaru-health.db.core :as db]
             [orchestra.spec.test]
             [ring.adapter.jetty :refer [run-jetty]]))
-
-(def patients-db
-  (atom
-   {1 {:id 1
-       :first-name "John"
-       :last-name "Doe"
-       :patronim nil
-       :birthdate "1990"
-       :gender "male"
-       :address "Street"
-       :oms "0000000000000000"}
-    2 {:id 2
-       :first-name "Jane"
-       :last-name "Doe"
-       :patronim nil
-       :birthdate "2000"
-       :gender "female"
-       :address "Street"
-       :oms "0000000000000000"}}))
 
 (defn -main
   [& _args]
   (let [{app-config :app
          server-config :server
-         :as config} (load-and-validate-config)
-        app (get-app {:db patients-db
-                      :logging? true})]
+         db-config :db} (load-and-validate-config)
+        db-datasource (db/get-connection-pool db-config)
+        app (get-app {:logging? (:logging app-config)
+                      :connection-pool db-datasource})]
     (when (= "development" (:env app-config))
       (orchestra.spec.test/instrument))
+    (db/setup-all!)
+    (db/test-connection db-datasource)
     (run-jetty app server-config)))
