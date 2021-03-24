@@ -25,9 +25,9 @@
 (defn start-test-container!
   []
   (-> (containers/create-from-docker-file {:env-vars image-env
-                          :exposed-ports [exposed-port]
+                                           :exposed-ports [exposed-port]
                                            :docker-file "test-db/Dockerfile"
-                          :wait-for {:wait-strategy :health}})
+                                           :wait-for {:wait-strategy :health}})
       containers/start!))
 
 (defn create-test-db!
