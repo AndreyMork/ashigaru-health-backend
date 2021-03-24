@@ -23,7 +23,6 @@
 
 (orchestra.spec.test/instrument)
 (db/setup-all!)
-(db-coerce/coerce-all!)
 
 (def container (test-db/start-test-container!))
 
