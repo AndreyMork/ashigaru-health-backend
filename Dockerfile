@@ -1,19 +1,24 @@
-# FROM clojure:openjdk-17-alpine AS build-image
-FROM clojure AS build-image
+FROM clojure AS building
 
 WORKDIR /usr/src
-COPY project.clj ./
-COPY src src
-COPY resources resources
+COPY deps.edn .
+# cache dependencies
+RUN ["clojure", "-X:project/jar"]
 
-RUN ["lein", "uberjar"]
+COPY resources resources
+COPY src src
+
+RUN ["clojure", "-X:project/uberjar"]
 
 
 FROM openjdk:17-alpine
 
 WORKDIR /usr/app
-COPY --from=build-image /usr/src/target/app.jar .
+COPY --from=building /usr/src/target/app.jar .
 
-EXPOSE 3000
+HEALTHCHECK --interval=10s --timeout=10s --retries=20 \
+  CMD wget localhost:$PORT --spider
+
+EXPOSE $PORT
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

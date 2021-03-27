@@ -7,11 +7,11 @@
 (s/def ::env #{"production" "development" "test"})
 (s/def ::app (s/keys :req-un [::env]))
 
-(s/def ::port int?)
+(s/def ::port nat-int?)
 (s/def ::logging boolean?)
 (s/def ::server (s/keys :req-un [::port ::logging]))
 
-(s/def ::port int?)
+(s/def ::port nat-int?)
 (s/def ::host string?)
 (s/def ::username string?)
 (s/def ::password string?)
@@ -26,6 +26,12 @@
     (throw (ex-info "Invalid configuration" (s/explain-data ::config config))))
   config)
 
+(defn parsePort
+  [port]
+  (-> port
+      str
+      (#(Integer/parseUnsignedInt %))))
+
 (defn load-config
   ([] (load-config nil))
   ([override]
@@ -33,16 +39,13 @@
                  (maailma/resource "config-defaults.edn")
                  (maailma/file ".local-config.edn")
                  (maailma/env "app")
-                 (maailma/env "server")
-                 (maailma/env "db")
                  (maailma/env-var "PORT" [:server :port])
                  (maailma/env-var "DATABASE_URL" [:db :uri])
                  override)]
      (-> config
-         (update-in [:server :port] #(Integer/parseUnsignedInt %))
-         (update :db #(if-let [uri (:uri %)]
-                        (utils/parse-db-uri uri)
-                        %))))))
+         (update-in [:server :port] parsePort)
+         (update :db #(if-let [uri (:uri %)] (utils/parse-db-uri uri) %))
+         (update-in [:db :port] parsePort)))))
 
 (defn load-and-validate-config
   ([] (load-and-validate-config nil))
