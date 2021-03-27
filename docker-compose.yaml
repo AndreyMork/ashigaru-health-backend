@@ -3,8 +3,8 @@ version: '3'
 services:
   ashigaru-health:
     image: ashigaru-health-backend:latest
-    restart: unless-stopped
+    # restart: unless-stopped
     env_file:
       - ./.env
     ports:
-      - '${PUBLISH_PORT}:3000'
+      - '${PUBLISH_PORT}:${PORT}'
