@@ -1,6 +1,8 @@
 (ns ashigaru-health.db.coerce
-  (:require [next.jdbc.result-set :as rs])
-  (:import org.postgresql.util.PGobject))
+  (:require
+   [next.jdbc.result-set :as rs])
+  (:import
+   org.postgresql.util.PGobject))
 
 (defn SqlDate->LocalDate!
   []

@@ -1,9 +1,58 @@
 (ns ashigaru-health.test-utils
-  (:require [ashigaru-health.patients.spec :as patient-spec]
-            [clojure.data.json :as json]
-            [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
-            [ring.mock.request :as mock]))
+  (:require
+   [ashigaru-health.db.queries :as queries]
+   [ashigaru-health.utils :as utils]
+   [clojure.data.json :as json]
+   [clojure.string :as string]
+   [integrant.core :as ig]
+   [ring.mock.request :as mock])
+  (:import
+   java.io.ByteArrayInputStream))
+
+(def test-config
+  {:test/fixtures {}
+   :test/container {:config (ig/ref :config/load)}
+   :db/connection-pool {:config (ig/ref :config/load)
+                        :container (ig/ref :test/container)
+                        :fixtures (ig/ref :test/fixtures)}})
+
+(defn load-test-system-config
+  []
+  (let [base-config (utils/load-system-config)]
+    (-> base-config
+        (merge test-config)
+        (dissoc :app/server))))
+
+(comment,
+  (load-test-system-config)
+  nil)
+
+(defn generate-db-name
+  [base]
+  (str base (rand-int 1000000)))
+
+(defn populate-test-db!
+  [connection patients]
+  (->> patients
+       (map utils/sqlize-patient)
+       (map #(assoc % :returning ["id"]))
+       (run! #(queries/new-patient! connection %)))
+  connection)
+
+(defn build-patients-path
+  [& parts]
+  (string/join "/" (into ["/patients"] parts)))
+
+(defn no-id
+  [patient]
+  (dissoc patient :id))
+
+(defn get-unknown-id
+  [patients]
+  (->> patients
+       (map :id)
+       (apply max)
+       inc))
 
 (defn parse-json
   [input]
@@ -11,7 +60,12 @@
 
 (defn with-json-body
   [response]
-  (update response :body parse-json))
+  (let [body (:body response)
+        string-body (if (instance? ByteArrayInputStream body)
+                      (slurp body)
+                      body)
+        json-body (parse-json string-body)]
+    (assoc response :body json-body)))
 
 (defn simple-request
   [app method path]
@@ -22,20 +76,3 @@
   [app method path]
   (-> (simple-request app method path)
       with-json-body))
-
-(defn generate-patients-vector
-  [n]
-  (gen/generate (-> (s/gen ::patient-spec/patient-no-id)
-                    (gen/vector n))))
-
-(defn generate-patients-map
-  [n]
-  (let [patients (generate-patients-vector n)]
-    (zipmap (map :id patients) patients)))
-
-(defn generate-unkonwn-id
-  [patients]
-  (gen/generate (gen/such-that
-                 #(not (contains? patients %))
-                 (s/gen nat-int?))))
-

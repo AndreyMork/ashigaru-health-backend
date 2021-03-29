@@ -12,8 +12,10 @@ default:
 
 # Build
 
+jar:
+ clojure -X:env/dev:env/test:project/jar
+
 build:
-  rm -rf target
   clojure -X:project/uberjar
 
 
@@ -29,7 +31,7 @@ lint:
   clj-kondo --parallel --lint {{src-dir}} {{test-dir}}
 
 test:
-  clojure -M:test/env:test/midje
+  clojure -M:env/test:test/midje
 
 full-test: format-check test
 
@@ -39,9 +41,7 @@ full-test: format-check test
 docker-build tag="latest":
   docker build --tag {{image-name}}:{{tag}} .
 
-deploy: full-test deploy-no-tests
-
-deploy-no-tests: docker-build
+deploy: docker-build
   docker-compose up --detach
 
 heroku-deploy:
