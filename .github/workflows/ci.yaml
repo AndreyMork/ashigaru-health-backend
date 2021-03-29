@@ -7,35 +7,27 @@ on:
     branches: [ master ]
 
 
-
 jobs:
   format-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: extractions/setup-just@v1
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@3.2
         with:
           cli: 1.10.2.774
       - name: format-check
-        run: make format-check
-
-  # lint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: DeLaGuardo/clojure-lint-action@master
-  #       with:
-  #         clj-kondo-args: --lint src test
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: just format-check
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: extractions/setup-just@v1
       - name: Install clojure tools
         uses: DeLaGuardo/setup-clojure@3.2
         with:
           cli: 1.10.2.774
       - name: test
-        run: make test
+        run: just test
