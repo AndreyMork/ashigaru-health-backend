@@ -6,7 +6,7 @@ FROM
   patients
 ;
 
--- :name get-patient-by-id :? :1
+-- :name get-patient :? :1
 -- :quoting :ansi
 SELECT
   :i*:columns
@@ -14,16 +14,6 @@ FROM
   patients
 WHERE
   id = :id
-;
-
--- :name patient-exists? :? :1
-SELECT EXISTS (
-  SELECT *
-  FROM 
-    patients
-  WHERE
-    id = :id
-)
 ;
 
 -- :name new-patient! :<! :1
@@ -49,7 +39,7 @@ RETURNING
   :i*:returning
 ;
 
--- :name update-patient-by-id! :<! :1
+-- :name update-patient! :<! :1
 UPDATE patients
 SET :updates:values
 WHERE id = :id
@@ -57,14 +47,15 @@ RETURNING
   :i*:returning
 ;
 
--- :name delete-patient-by-id! :<! :1
+-- :name delete-patient! :<! :1
 DELETE FROM patients
 WHERE id = :id
 RETURNING id
 ;
 
 -- :name create-test-db!
-CREATE DATABASE :identifier:db-name TEMPLATE :identifier:template-db-name;
+CREATE DATABASE :identifier:db-name
+TEMPLATE :identifier:template-db-name;
 
 -- :name drop-db!
 DROP DATABASE :identifier:db-name;

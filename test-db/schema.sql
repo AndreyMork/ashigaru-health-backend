@@ -17,5 +17,19 @@ CREATE TABLE patients (
   gender    _gender NOT NULL,
   birthdate date    NOT NULL,
 
-  oms_number _oms_number NOT NULL
+  oms_number _oms_number NOT NULL UNIQUE
 );
+
+CREATE FUNCTION random_oms () RETURNS _oms_number
+LANGUAGE plpgsql VOLATILE
+AS $$
+  DECLARE
+    oms_number varchar(16) = '';
+  BEGIN
+    FOR _ IN 1..16 LOOP
+      oms_number := oms_number || trunc(random() * 10);
+    END LOOP; 
+  
+    RETURN oms_number;
+  END;
+$$;

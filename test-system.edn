@@ -1,0 +1,29 @@
+{:config/load {}
+ :runtime/setup {}
+ :db/connection-pool {:config #ig/ref :config/load
+                      :runtime-setup #if/ref :runtime/setup}
+
+ :test/fixtures {}
+ :test/container {:config #ig/ref :config/load}
+ :test/connection-pool {:config #ig/ref :config/load
+                        :container #ig/ref :test/container
+                        :fixtures #ig/ref :test/fixtures}
+ :test/db {:connection-pool #ig/ref :test/connection-pool}
+
+ :resources/get-patients {:connection-pool #ig/ref :db/connection-pool}
+ :resources/new-patient {:connection-pool #ig/ref :db/connection-pool}
+ :resources/get-patient {:connection-pool #ig/ref :db/connection-pool}
+ :resources/update-patient {:connection-pool #ig/ref :db/connection-pool}
+ :resources/delete-patient {:connection-pool #ig/ref :db/connection-pool}
+
+ :app/router [["/patients" {:name :routes/patients
+                            :get #ig/ref :resources/get-patients
+                            :post #ig/ref :resources/new-patient}]
+              ["/patients/:id" {:name :routes/patient
+                                :get #ig/ref :resources/get-patient
+                                :patch #ig/ref :resources/update-patient
+                                :delete #ig/ref :resources/delete-patient}]]
+
+ :app/handler {:router #ig/ref :app/router}
+ :app/server {:config #ig/ref :config/load
+              :handler #ig/ref :app/handler}}
