@@ -23,7 +23,7 @@
   [:map [:message string?]])
 
 (def patient-not-found-message
-  {:message "Paitent not found"})
+  {:message "Patient not found"})
 
 (defn get-patients
   [connection-pool]
