@@ -2,12 +2,10 @@
   (:require
    [ashigaru-health.db.queries :as queries]
    [ashigaru-health.utils :as utils]
-   [clojure.data.json :as json]
    [clojure.string :as string]
    [integrant.core :as ig]
-   [ring.mock.request :as mock])
-  (:import
-   java.io.ByteArrayInputStream))
+   [muuntaja.core :as muuntaja]
+   [ring.mock.request :as mock]))
 
 (def test-config
   {:test/fixtures {}
@@ -54,25 +52,20 @@
        (apply max)
        inc))
 
-(defn parse-json
-  [input]
-  (json/read-str input :key-fn keyword))
-
-(defn with-json-body
+(defn content-type-header-set?
   [response]
-  (let [body (:body response)
-        string-body (if (instance? ByteArrayInputStream body)
-                      (slurp body)
-                      body)
-        json-body (parse-json string-body)]
-    (assoc response :body json-body)))
+  (get-in response [:headers "Content-Type"]))
 
-(defn simple-request
-  [app method path]
-  (-> (mock/request method path)
-      app))
+(defn with-decoded-body
+  [response]
+  (if (content-type-header-set? response)
+    (assoc response :body (muuntaja/decode-response-body response))
+    response))
 
-(defn simple-json-request
-  [app method path]
-  (-> (simple-request app method path)
-      with-json-body))
+(defn request
+  ([app method path] (request app method path nil))
+  ([app method path body]
+   (let [request (-> (mock/request method path)
+                     (#(if body (mock/json-body % body) %)))
+         response (app request)]
+     (with-decoded-body response))))
