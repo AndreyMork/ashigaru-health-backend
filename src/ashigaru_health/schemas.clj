@@ -9,7 +9,7 @@
 
 (defn contains-utf-0x00
   [x]
-  (.contains x (str \u0000)))
+  (.contains x "\u0000"))
 
 (def not-empty-string-schema
   [:and
