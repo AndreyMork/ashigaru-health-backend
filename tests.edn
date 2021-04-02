@@ -1,0 +1,7 @@
+#kaocha/v1
+ {:reporter [; kaocha.report/documentation
+             kaocha.report/dots]
+  :plugins [:hooks]
+  :kaocha.hooks/pre-run [ashigaru-health.kaocha-hooks/pre-run]
+  :kaocha.hooks/pre-test [ashigaru-health.kaocha-hooks/pre-test]
+  :kaocha.hooks/post-test [ashigaru-health.kaocha-hooks/post-test]}

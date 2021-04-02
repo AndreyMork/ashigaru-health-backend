@@ -30,8 +30,8 @@ format:
 lint:
   clj-kondo --parallel --lint {{src-dir}} {{test-dir}}
 
-test:
-  clojure -M:env/test:test/midje
+test +args="":
+  clojure -A:env/test -m kaocha.runner {{args}}
 
 full-test: format-check test
 
