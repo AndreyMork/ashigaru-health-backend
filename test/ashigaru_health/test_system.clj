@@ -1,4 +1,4 @@
-(ns ashigaru-health.system_test
+(ns ashigaru-health.test-system
   (:require
    [ashigaru-health.db.core :as db]
    [ashigaru-health.db.queries :as queries]
