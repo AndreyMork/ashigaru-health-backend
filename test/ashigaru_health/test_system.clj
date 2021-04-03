@@ -24,7 +24,7 @@
 (defmethod ig/resume-key :test/container [_ _ _ container]
   container)
 
-(defmethod ig/init-key :db/connection-pool [_ {:keys [container config fixtures]}]
+(defmethod ig/init-key :test/connection-pool [_ {:keys [container config fixtures]}]
   (let [{:keys [exposed-ports
                 db-name
                 env-vars]} (:test config)

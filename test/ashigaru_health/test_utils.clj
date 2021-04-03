@@ -10,16 +10,18 @@
 (def test-config
   {:test/fixtures {}
    :test/container {:config (ig/ref :config/load)}
-   :db/connection-pool {:config (ig/ref :config/load)
-                        :container (ig/ref :test/container)
-                        :fixtures (ig/ref :test/fixtures)}})
+   :test/connection-pool {:config (ig/ref :config/load)
+                          :container (ig/ref :test/container)
+                          :fixtures (ig/ref :test/fixtures)}})
 
 (defn load-test-system-config
   []
   (let [base-config (utils/load-system-config)]
+    (derive :test/connection-pool :db/connection-pool)
     (-> base-config
-        (merge test-config)
-        (dissoc :app/server))))
+        (dissoc :db/connection-pool)
+        (dissoc :app/server)
+        (merge test-config))))
 
 (comment,
   (load-test-system-config)

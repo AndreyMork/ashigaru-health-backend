@@ -1,4 +1,4 @@
-# dotenv-load := false
+# set dotenv-load := false
 
 src-dir := "src"
 test-dir := "test"
@@ -9,6 +9,9 @@ image-name := "ashigaru-health-backend"
 default:
   @just --list
 
+run:
+  APP_DB_HOST="" \
+  clojure --main ashigaru-health.main
 
 # Build
 

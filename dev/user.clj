@@ -1,13 +1,13 @@
 (ns user
   (:require
-   [ashigaru-health.system]
-   [ashigaru-health.test-system]
+   ; [ashigaru-health.system]
+   ; [ashigaru-health.test-system]
    [ashigaru-health.utils :as utils]
    [ashigaru-health.kaocha-hooks :as kh]
    [clj-test-containers.core :as containers]
    [clojure.repl :refer :all]
    ; [clojure.tools.namespace.repl :refer [set-refresh-dirs]]
-   [integrant.core :as ig]
+   ; [integrant.core :as ig]
    [integrant.repl :as ig-repl]
    [kaocha.repl :as k]
    [kaocha.watch]))
