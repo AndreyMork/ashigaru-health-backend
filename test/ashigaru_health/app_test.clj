@@ -37,7 +37,7 @@
            (:status response) => 200
            patients => fixtures/patients)))
 
-(deftest new-patient
+(deftest create-patient
   (checking
    "New patient body" 40
    [body (mg/generator schemas/new-patient-schema)]

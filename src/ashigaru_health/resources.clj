@@ -27,7 +27,10 @@
 
 (defn get-patients
   [connection-pool]
-  {:responses {200 {:body schemas/patients-schema}}
+  {:summary "Get patients"
+   :swagger {:operationId "get-patients"
+             :tags ["patients"]}
+   :responses {200 {:body schemas/patients-schema}}
    :handler
    (fn [_]
      (let [patients (queries/get-patients
@@ -37,7 +40,10 @@
 
 (defn get-patient
   [connection-pool]
-  {:responses {200 {:body schemas/patient-schema}
+  {:summary "Get patient"
+   :swagger {:operationId "get-patient"
+             :tags ["patients"]}
+   :responses {200 {:body schemas/patient-schema}
                404 {:body default-body-schema}}
    :parameters {:path id-in-path-schema}
    :handler
@@ -50,9 +56,12 @@
          (res/ok patient)
          (res/not-found patient-not-found-message))))})
 
-(defn new-patient
+(defn create-patient
   [connection-pool]
-  {:responses {200 {:body schemas/patient-schema}
+  {:summary "Create new patient"
+   :swagger {:operationId "create-patient"
+             :tags ["patients"]}
+   :responses {200 {:body schemas/patient-schema}
                409 {:body default-body-schema}}
    :parameters {:body schemas/new-patient-schema}
    :handler
@@ -60,13 +69,16 @@
      (let [sql-params (-> body-params
                           utils/sqlize-patient
                           (assoc :returning default-columns))
-           new-patient (queries/new-patient! connection-pool sql-params)
-           location-url (utils/build-location-url request (:id new-patient))]
-       (res/created location-url new-patient)))})
+           create-patient (queries/create-patient! connection-pool sql-params)
+           location-url (utils/build-location-url request (:id create-patient))]
+       (res/created location-url create-patient)))})
 
 (defn update-patient
   [connection-pool]
-  {:responses {200 {:body schemas/patient-schema}
+  {:summary "Update patient"
+   :swagger {:operationId "update-patient"
+             :tags ["patients"]}
+   :responses {200 {:body schemas/patient-schema}
                404 {:body default-body-schema}
                409 {:body default-body-schema}}
    :parameters {:path id-in-path-schema
@@ -87,7 +99,10 @@
 
 (defn delete-patient
   [connection-pool]
-  {:responses {204 {}
+  {:summary "Delete patient"
+   :swagger {:operationId "delete-patient"
+             :tags ["patients"]}
+   :responses {204 {}
                404 {:body default-body-schema}}
    :parameters {:path id-in-path-schema}
    :handler

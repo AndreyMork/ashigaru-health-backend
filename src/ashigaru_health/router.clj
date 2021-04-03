@@ -32,6 +32,12 @@
    ["/api-docs/*" {:get (swagger-ui/create-swagger-ui-handler)
                    :no-doc true}]])
 
+(def muuntaja-instance
+  (muuntaja/create
+   (muuntaja/select-formats
+    muuntaja/default-options
+    ["application/json"])))
+
 (defn get-router
   [routes config]
   (let [logging? (get-in config [:app :logging?] true)
@@ -46,6 +52,6 @@
                      rrc/coerce-response-middleware]]
     (ring/router
      [routes general-routes]
-     {:data {:muuntaja muuntaja/instance
+     {:data {:muuntaja muuntaja-instance
              :coercion coercion.malli/coercion
              :middleware middlewares}})))

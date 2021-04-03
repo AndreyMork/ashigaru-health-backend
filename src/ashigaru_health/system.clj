@@ -24,9 +24,9 @@
   [_ {:keys [connection-pool]}]
   (resources/get-patients connection-pool))
 
-(defmethod ig/init-key :resources/new-patient
+(defmethod ig/init-key :resources/create-patient
   [_ {:keys [connection-pool]}]
-  (resources/new-patient connection-pool))
+  (resources/create-patient connection-pool))
 
 (defmethod ig/init-key :resources/get-patient
   [_ {:keys [connection-pool]}]

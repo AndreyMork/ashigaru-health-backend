@@ -16,7 +16,7 @@ WHERE
   id = :id
 ;
 
--- :name new-patient! :<! :1
+-- :name create-patient! :<! :1
 INSERT INTO patients (
   first_name,
   last_name,
