@@ -36,7 +36,7 @@
   (->> patients
        (map utils/sqlize-patient)
        (map #(assoc % :returning ["id"]))
-       (run! #(queries/new-patient! connection %)))
+       (run! #(queries/create-patient! connection %)))
   connection)
 
 (defn build-patients-path
