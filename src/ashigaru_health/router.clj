@@ -10,6 +10,7 @@
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
    [ring.logger.timbre :as logger]
+   [ring.middleware.cors :as cors]
    [ring.util.http-response :as res])
   (:import
    org.postgresql.util.PSQLException))
@@ -23,6 +24,16 @@
         (if (utils/oms-number-unique-constraint-error? e)
           (res/conflict {:message "Provided oms number already exists"})
           (throw e))))))
+
+(defn cors-middleware
+  [origin]
+  (fn
+    [handler]
+    (cors/wrap-cors handler
+                    :access-control-allow-origin [(re-pattern origin)]
+                    :access-control-allow-methods #{:get :patch :post :delete}
+                    :access-control-allow-credentials "true"
+                    :access-control-allow-headers #{:accept :content-type})))
 
 (def general-routes
   [""
@@ -40,7 +51,9 @@
 
 (defn get-router
   [routes config]
-  (let [logging? (get-in config [:app :logging?] true)
+  (let [app-config (get config :app)
+        logging? (get app-config :logging? true)
+        origin (get-in app-config [:cors :origin] "")
         middlewares [middleware.muuntaja/format-middleware
                      middleware.exception/exception-middleware
                      (if logging?
@@ -49,7 +62,9 @@
                      postgres-error-handler
                      rrc/coerce-exceptions-middleware
                      rrc/coerce-request-middleware
-                     rrc/coerce-response-middleware]]
+                     rrc/coerce-response-middleware
+                     (cors-middleware origin)]]
+
     (ring/router
      [routes general-routes]
      {:data {:muuntaja muuntaja-instance

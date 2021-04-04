@@ -11,6 +11,7 @@
         org.clojure/clojure {:mvn/version "1.10.2"}
         org.clojure/data.generators {:mvn/version "1.0.0"}
         org.postgresql/postgresql {:mvn/version "42.2.19.jre7"}
+        ring-cors/ring-cors {:mvn/version "0.1.13"}
         ring-logger-timbre/ring-logger-timbre {:mvn/version "0.7.6"}
         ring/ring-jetty-adapter {:mvn/version "1.8.2"}
         tick/tick {:mvn/version "0.4.30-alpha"}}
