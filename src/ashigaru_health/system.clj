@@ -5,7 +5,6 @@
    [ashigaru-health.db.core :as db]
    [ashigaru-health.handler :as handler]
    [ashigaru-health.resources :as resources]
-   [ashigaru-health.router :as router]
    [integrant.core :as ig]
    [ring.adapter.jetty :as jetty]))
 
@@ -40,11 +39,8 @@
   [_ {:keys [connection-pool]}]
   (resources/delete-patient connection-pool))
 
-(defmethod ig/init-key :app/router [_ {:keys [routes config]}]
-  (router/get-router routes config))
-
-(defmethod ig/init-key :app/handler [_ {:keys [router]}]
-  (handler/get-handler router))
+(defmethod ig/init-key :app/handler [_ {:keys [routes config]}]
+  (handler/get-handler routes config))
 
 (defmethod ig/init-key :app/server [_ {:keys [config handler]}]
   (let [server-config (:server config)]

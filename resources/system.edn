@@ -8,17 +8,15 @@
  :resources/update-patient {:connection-pool #ig/ref :db/connection-pool}
  :resources/delete-patient {:connection-pool #ig/ref :db/connection-pool}
 
- :app/router {:routes [["/patients" {:name :routes/patients
-                                     :get #ig/ref :resources/get-patients
-                                     :post #ig/ref :resources/create-patient
-                                     }]
-                       ["/patients/:id" {:name :routes/patient
-                                         :get #ig/ref :resources/get-patient
-                                         :patch #ig/ref :resources/update-patient
-                                         :delete #ig/ref :resources/delete-patient}]]
-              :config #ig/ref :config/load}
-
- :app/handler {:router #ig/ref :app/router
+ :app/handler {:routes [["/patients" {:name :routes/patients
+                                      :get #ig/ref :resources/get-patients
+                                      :post #ig/ref :resources/create-patient}]
+                        ["/patients/:id" {:name :routes/patient
+                                          :get #ig/ref :resources/get-patient
+                                          :patch #ig/ref :resources/update-patient
+                                          :delete #ig/ref :resources/delete-patient}]]
+               :config #ig/ref :config/load
                :runtime-setup #ig/ref :runtime/setup}
+
  :app/server {:config #ig/ref :config/load
               :handler #ig/ref :app/handler}}
