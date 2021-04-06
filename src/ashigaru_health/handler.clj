@@ -54,7 +54,7 @@
   (let [app-config (get config :app)
         logging? (get app-config :logging? true)
         origin (get-in app-config [:cors :origin] "")
-        middlewares [middleware.muuntaja/format-middleware
+        middlewares [(cors-middleware origin) middleware.muuntaja/format-middleware
                      middleware.exception/exception-middleware
                      (if logging?
                        logger/wrap-with-logger
@@ -62,8 +62,7 @@
                      postgres-error-handler
                      rrc/coerce-exceptions-middleware
                      rrc/coerce-request-middleware
-                     rrc/coerce-response-middleware
-                     (cors-middleware origin)]
+                     rrc/coerce-response-middleware]
         router (ring/router
                 [routes general-routes]
                 {:data {:muuntaja muuntaja-instance
