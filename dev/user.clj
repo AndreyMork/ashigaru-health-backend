@@ -4,6 +4,7 @@
    ; [ashigaru-health.test-system]
    [ashigaru-health.utils :as utils]
    [ashigaru-health.kaocha-hooks :as kh]
+   [ashigaru-health.app-test :as tests]
    [clj-test-containers.core :as containers]
    [clojure.repl :refer :all]
    ; [clojure.tools.namespace.repl :refer [set-refresh-dirs]]
@@ -29,13 +30,14 @@
   (reset-all)
   (containers/perform-cleanup!)
 
-  (k/run-all)
+  (k/run-all {:fail-fast? true
+              :color? false})
+  (k/run #'tests/get-patients {:color? false})
   (kh/init-system!)
   (kh/halt-system!)
   (kh/loaded-on!)
   (kh/loaded-off!)
-  (println @kh/app)
-  (println @kh/system)
+  @kh/app
+  @kh/system
   (kaocha.watch/run (kaocha.repl/config))
-
   nil)
