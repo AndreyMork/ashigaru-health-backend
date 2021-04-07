@@ -9,9 +9,9 @@ CREATE TABLE patients (
 
   created_at timestamptz NOT NULL DEFAULT current_timestamp,
 
-  first_name citext NOT NULL CHECK (first_name <> ''),
-  last_name  citext NOT NULL CHECK (last_name <> ''),
-  address    citext NOT NULL CHECK (address <> ''),
+  first_name citext NOT NULL CHECK (trim(first_name) <> ''),
+  last_name  citext NOT NULL CHECK (trim(last_name) <> ''),
+  address    citext NOT NULL CHECK (trim(address) <> ''),
 
   gender    _gender NOT NULL,
   birthdate date    NOT NULL,

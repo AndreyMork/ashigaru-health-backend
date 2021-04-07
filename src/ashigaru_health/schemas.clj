@@ -2,19 +2,18 @@
   (:require
    [clojure.data.generators :as data-gen]
    [clojure.spec.gen.alpha :as gen]
+   [malli.generator]
    [malli.util]
    [tick.alpha.api :as tick])
   (:import
    java.time.LocalDate))
 
-(defn contains-utf-0x00
-  [x]
-  (.contains x "\u0000"))
-
-(def not-empty-string-schema
-  [:and
-   [:string {:min 1}]
-   [:fn #(not (contains-utf-0x00 %))]])
+(def valid-name-regex #"(?u)[\pL\pP ]*[\pL\pP][\pL\pP ]*")
+(def valid-name-schema
+  [:re
+   {:gen/gen (malli.generator/generator
+              [:re #"[A-Za-z\-',. ]*[A-Za-z\-',.][A-Za-z\-',. ]*"])}
+   valid-name-regex])
 
 (def oms-number-schema
   [:re #"\d{16}"])
@@ -46,10 +45,10 @@
 (def patient-schema
   [:map
    [:id nat-int?]
-   [:first_name not-empty-string-schema]
-   [:last_name not-empty-string-schema]
+   [:first_name valid-name-schema]
+   [:last_name valid-name-schema]
    [:birthdate date-schema]
-   [:address not-empty-string-schema]
+   [:address valid-name-schema]
    [:gender gender-schema]
    [:oms_number oms-number-schema]])
 
@@ -63,3 +62,8 @@
   [:and
    (malli.util/optional-keys new-patient-schema)
    [:fn #(not= % {})]])
+
+(comment
+  (malli.generator/generate valid-name-schema)
+  (malli.generator/generate new-patient-schema)
+  nil)
