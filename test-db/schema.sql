@@ -11,7 +11,6 @@ CREATE TABLE patients (
 
   first_name citext NOT NULL CHECK (first_name <> ''),
   last_name  citext NOT NULL CHECK (last_name <> ''),
-  patronim   citext          CHECK (patronim <> ''),
   address    citext NOT NULL CHECK (address <> ''),
 
   gender    _gender NOT NULL,

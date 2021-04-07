@@ -45,7 +45,6 @@
    (let [path (build-patients-path)
          body {:last_name "\u0000"
                :birthdate "2000-20-20"
-               :patronim true
                :address ""
                :gender "abc"
                :oms "12345"}
@@ -99,7 +98,6 @@
           path (build-patients-path id)
           body1 {:first_name nil
                  :last_name 123
-                 :patronim true
                  :address ""
                  :gender "abc"
                  :oms "12345"}

@@ -32,7 +32,6 @@
 (def new-patient-keys
   #{:first_name
     :last_name
-    :patronim
     :birthdate
     :gender
     :address

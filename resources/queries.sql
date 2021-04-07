@@ -20,7 +20,6 @@ WHERE
 INSERT INTO patients (
   first_name,
   last_name,
-  patronim,
   birthdate,
   gender,
   address,
@@ -29,7 +28,6 @@ INSERT INTO patients (
 VALUES (
   :first_name,
   :last_name,
-  :patronim,
   :birthdate,
   :gender,
   :address,
