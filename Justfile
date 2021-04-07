@@ -34,7 +34,7 @@ lint:
   clj-kondo --parallel --lint {{src-dir}} {{test-dir}}
 
 test +args="":
-  clojure -A:env/test -m kaocha.runner {{args}}
+  clojure -A:env/test -m kaocha.runner {{args}} --plugin cloverage
 
 full-test: format-check test
 
