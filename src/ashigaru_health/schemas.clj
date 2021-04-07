@@ -48,7 +48,6 @@
    [:id nat-int?]
    [:first_name not-empty-string-schema]
    [:last_name not-empty-string-schema]
-   [:patronim [:maybe not-empty-string-schema]]
    [:birthdate date-schema]
    [:address not-empty-string-schema]
    [:gender gender-schema]
