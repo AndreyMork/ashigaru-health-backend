@@ -29,7 +29,7 @@
 
 (defn generate-db-name
   [base]
-  (str base (rand-int 1000000)))
+  (str base (java.util.UUID/randomUUID)))
 
 (defn populate-test-db!
   [connection patients]
